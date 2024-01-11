@@ -1,5 +1,6 @@
 package com.example.back.service;
 
+import com.example.back.domain.OauthId;
 import com.example.back.domain.OauthMember;
 import com.example.back.domain.OauthServerType;
 import com.example.back.domain.authcode.AuthCodeRequestUrlProviderComposite;
@@ -7,6 +8,7 @@ import com.example.back.domain.client.OauthMemberClientComposite;
 import com.example.back.repository.OauthMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class OauthService {
         return authCodeRequestUrlProviderComposite.provide(oauthServerType);
     }
 
+    @Transactional(readOnly = true)
     public Long login(OauthServerType oauthServerType, String authCode) {
         OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode); // 로그인 진행하려는 oauth server type에 해당하는 회원을 auth code로 조회
         OauthMember saved = oauthMemberRepository.findByOauthId(oauthMember.oauthId()) // OauthId를 통해 데이터베이스에서 회원을 찾아옴
